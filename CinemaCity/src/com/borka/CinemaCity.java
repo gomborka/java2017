@@ -15,8 +15,17 @@ public class CinemaCity {
         }
     }
 
-    public void buyTicket() {
-        mainHall.seatSold();
+    public void buyTicket(int seat) {
+        if (seat >=0 && seat <= mainHall.getSeats().length) {
+            mainHall.seatSold(seat);
+        }else {
+            mainHall.seatSold();
+        }
+
+    }
+
+    public void buyTicket (){
+         mainHall.seatSold();
     }
 
     public void printHall()

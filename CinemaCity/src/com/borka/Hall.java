@@ -16,15 +16,29 @@ public class Hall {
         return seats;
     }
 
-    public void seatSold()
-    {
+
+    public void seatSold(int seat) {
+
+        if (!seats[seat]) {
+            seats[seat] = true;
+            return;
+        } else {
+            for (int i = 0; i < seats.length; i++) {
+                if (!seats[i]) {
+                    seats[i] = true;
+                    return;
+                }
+            }
+        }
+    }
+
+    public void seatSold() {
+
         for (int i = 0; i < seats.length; i++) {
-            if(!seats[i])
-            {
-                seats[i]=true;
+            if (!seats[i]) {
+                seats[i] = true;
                 return;
             }
-
         }
     }
 }
