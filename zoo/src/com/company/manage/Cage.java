@@ -4,41 +4,27 @@ import com.company.animal.Animal;
 
 import java.util.Arrays;
 
-/**
- * Created by borka on 9/2/2017.
- */
+
+
 public class Cage {
 
-Animal[] airCage;
-Animal [] wildCage;
-Animal [] waterCage;
+    private String nameCage;
 
-    public Animal[] getAirCage() {
-        return airCage;
+    private Animal[] animals;
+
+
+    public Cage(String nameCage) {
+        this.nameCage = nameCage;
     }
 
-    public void setAirCage(Animal[] airCage) {
-        this.airCage = airCage;
-    }
+    public void addTo (Animal animal, Cage cage )
+  {
 
-    public Animal[] getWildCage() {
-        return wildCage;
-    }
+      airCage[0] =animal;
 
-    public void setWildCage(Animal[] wildCage) {
-        this.wildCage = wildCage;
-    }
+  }
 
-    public Animal[] getWaterCage() {
-        return waterCage;
-    }
 
-    public void setWaterCage(Animal[] waterCage) {
-        this.waterCage = waterCage;
-
-    }
-
-    public addAnimalToCage (nimal )
     @Override
     public String toString() {
         return "Cage{" +
