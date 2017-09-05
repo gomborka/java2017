@@ -10,35 +10,31 @@ public class Zoo {
     Cage[] cage = new Cage[3];
 
     public Zoo() {
-    public Zoo() {
-         Animal [] airCage = new Animal[10];
-       Animal [] groundCage = new Animal[10];
-         Animal [] waterCage = new Animal[10];
-    public Zoo() {
-        Animal[] airCage;
-        Animal[] groundCage;
-        Animal[] waterCage;
+<<<<<<< HEAD
+
         Animal [] airCage = new Animal[10];
        Animal [] groundCage = new Animal[10];
          Animal [] waterCage = new Animal[10];
 
     }
 
-
-
     public void addAnimalToZoo(Animal animal)
     {
         switch (animal.getPlace())
         {
             case "ground" :
+=======
+        Animal[] airCage;
+        Animal[] groundCage;
+        Animal[] waterCage;
+
+    }
+
+
     public void addAnimalToZoo(Animal animal) {
         switch (animal.getPlace()) {
             case "ground":
-    public void addAnimalToZoo(Animal animal)
-    {
-        switch (animal.getPlace())
-        {
-            case "ground" :
+>>>>>>> ca09482e013c9f75b41af068bd08fc80d219e8ef
                 addAnimalToCage(animal, Cage.groundCage);
                 break;
             case "water":

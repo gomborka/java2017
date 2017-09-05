@@ -28,6 +28,7 @@ public class Main {
 
 
         System.out.println(" ----  All animal in the ZOO :  -----------");
+
         zoo.printCage(Cage.groundCage);
         zoo.printCage(Cage.airCage);
         zoo.printCage(Cage.waterCage);
