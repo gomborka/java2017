@@ -7,17 +7,15 @@ import com.company.animal.Animal;
  */
 public class Zoo {
 
-
+    Cage[] cage = new Cage[3];
 
     public Zoo() {
-         Animal [] airCage = new Animal[10];
+
+        Animal [] airCage = new Animal[10];
        Animal [] groundCage = new Animal[10];
          Animal [] waterCage = new Animal[10];
 
     }
-
-
-
 
     public void addAnimalToZoo(Animal animal)
     {
