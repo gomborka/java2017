@@ -20,7 +20,7 @@ public class MainStaticExample {
         System.out.println(Animal.id);
         System.out.println(Animal.id);
 
-    Animal.
+
       //  System.out.println(b.getNumber());
 
     }

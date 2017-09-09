@@ -13,6 +13,7 @@ public class Animal {
     {
         this.name =name;
         this.number=id++;
+      //  this.number=number;
     }
 
     public String getName() {
