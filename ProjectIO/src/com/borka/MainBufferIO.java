@@ -94,6 +94,8 @@ public class MainBufferIO {
 
     public static void deleteAllFiles( File folder)
     {
+
+
         List<String> results = new ArrayList<String>();
        // File[] files = new File(folder.getAbsolutePath()).listFiles();
         File[] files = folder.listFiles();
