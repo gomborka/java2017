@@ -42,11 +42,20 @@ public class CopyWebTarg {
                 }
 
                 System.out.println("Downloaded to : "+file.toString());
+
+                connection.disconnect();
                 in.close();
                 out.close();
-            } catch (MalformedURLException e) {
+            }
+
+            catch (FileNotFoundException e) {
+                System.out.println("File no found: "+fullPath);
+            }
+            catch (MalformedURLException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
+            }
+
+            catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -64,19 +73,18 @@ public class CopyWebTarg {
 
           for (int j = 1; j < items.length ; j++) {
 
-             File newFile = new File (copyDir+"\\"+ items[j].getName().toString());
-             System.out.println(" newFile : " +newFile.toString());
-
              try {
-                 newFile.createNewFile();
+
                  int actuallyRead ;
                  byte [] buffer = new byte[1024];
                  FileInputStream in = new FileInputStream(items[j]);
-                 FileOutputStream out = new FileOutputStream(newFile);
+                 FileOutputStream out = new FileOutputStream(copyDir+"\\"+ items[j].getName().toString());
+
                  while((actuallyRead = in.read(buffer))!=-1)
                  {
                      out.write(buffer,0,actuallyRead);
                  }
+                 System.out.println("Saved to " + copyDir+"\\"+ items[j].getName().toString());
                  in.close();
                  out.close();
 
