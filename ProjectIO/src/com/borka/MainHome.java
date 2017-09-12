@@ -10,8 +10,8 @@ import java.util.List;
 public class MainHome {
 
     static String content = "This is line #1 \n this line #2";
-    static File myDir = new File("C:\\boris\\misc\\");
-    static File file = new File (myDir.toString()+"data.txt");
+    static File myDir = new File("C:\\boris\\misc");
+    static File file = new File (myDir.toString()+"\\data.txt");
     public static void main(String[] args) {
 
 
@@ -21,7 +21,9 @@ public class MainHome {
         byte[] buffer = content.getBytes();
         try {
             file.createNewFile();
+            System.out.println("file"+file);
             BufferedWriter out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream(file)));
+
             out.write(content);
             out.close();
             System.out.println("Write Done !!!");
@@ -40,19 +42,21 @@ public class MainHome {
 
         File [] items = folder.listFiles();
 
+        File copyDir = new File ("C:\\boris\\copied\\");
+        copyDir.mkdir();
+        System.out.println("CopyDir:" + copyDir);
+
         for (int i = 0; i < items.length; i++)  {
 
         System.out.println("AAA: "+items[i].toString());
             String pathDir= null;
 
             try {
-                File copyDir = new File (myDir+"\\copied\\");
-                System.out.println("CopyDir:" + copyDir);
 
                 File newFile =new File(copyDir+"\\"+items[i].getName().toString());
                 System.out.println(" newFIletoStr :" + newFile.toString());
 
-                copyDir.mkdir();
+
                 newFile.createNewFile();
                 int actuallyRead ;
                 byte [] buffer = new byte[1024];
@@ -67,7 +71,7 @@ public class MainHome {
 
                 }
                 in.close();
-            //    out.close();
+               out.close();
 
 
             } catch (FileNotFoundException e) {
