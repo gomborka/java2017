@@ -22,6 +22,7 @@ public class MainJsonFromWeb {
 
         String pathJSON ="http://haderajson.1apps.com/";
 
+        ////////////// Download JSON ////////////////////////
         try {
             URL url = new URL(pathJSON);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -32,43 +33,49 @@ public class MainJsonFromWeb {
             {
                 sb.append(text);
             }
-        //    System.out.println(sb);
-            String jsonText =sb.toString();
-            reader.close();
-////////////////////////  Json parse ///////////////////////////////
+   //         System.out.println(sb.toString());
 
-           JSONObject jsonFull = new JSONObject(jsonText);
-           JSONArray mainArray=jsonFull.getJSONArray(("sportNews"));
-      //      System.out.println(mainArray);
-
-            for (int i = 0; i <mainArray.length() ; i++) {
-               JSONObject tempObject = mainArray.getJSONObject(i);
-               String nameSubject = tempObject.getString("subject");
-                System.out.println(nameSubject);
-                File innerFolder = new File(localPath+"\\"+nameSubject);
-                innerFolder.mkdir();
-               // System.out.println(tempObject);
-
-                String urlName= tempObject.getString("image");
-                System.out.println(urlName);
-
-                String time = tempObject.getString("time");
-                System.out.println(time);
-
-                System.out.println("-----------------");
-                downloadImage(urlName, nameSubject);
-                createTXT(nameSubject,time);
-            }
+            parseJSON (sb);
+                reader.close();
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
     }
 
+    public static void parseJSON (StringBuilder sb)
+    {
+
+    try {
+        JSONObject jsonFull = new JSONObject(sb.toString());
+        JSONArray mainArray = jsonFull.getJSONArray(("sportNews"));
+        //      System.out.println(mainArray);
+
+        for (int i = 0; i < mainArray.length(); i++) {
+            JSONObject tempObject = mainArray.getJSONObject(i);
+            String nameSubject = tempObject.getString("subject");
+            System.out.println(nameSubject);
+            File innerFolder = new File(localPath + "\\" + nameSubject);
+            innerFolder.mkdir();
+            // System.out.println(tempObject);
+
+            String urlName = tempObject.getString("image");
+            System.out.println(urlName);
+
+            String time = tempObject.getString("time");
+            System.out.println(time);
+
+            System.out.println("-----------------");
+            downloadImage(urlName, nameSubject);
+            createTXT(nameSubject, time);
+        }
+    }
+          catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
   public static void downloadImage (String link,String name)
   {
@@ -103,7 +110,6 @@ public class MainJsonFromWeb {
 
           out.write(name + " starts at " + time);
           out.close();
-
 
       } catch (IOException e) {
           e.printStackTrace();
