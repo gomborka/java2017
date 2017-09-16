@@ -26,7 +26,7 @@ public class MainJsonFromWeb {
             URL url = new URL(pathJSON);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             BufferedReader reader = new BufferedReader (new InputStreamReader(conn.getInputStream()));
-           StringBuilder sb = new StringBuilder ();
+            StringBuilder sb = new StringBuilder ();
             String text ="";
             while((text=reader.readLine())!=null)
             {
@@ -35,6 +35,7 @@ public class MainJsonFromWeb {
         //    System.out.println(sb);
             String jsonText =sb.toString();
             reader.close();
+
 ////////////////////////  Json parse ///////////////////////////////
 
            JSONObject jsonFull = new JSONObject(jsonText);
