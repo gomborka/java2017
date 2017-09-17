@@ -10,117 +10,232 @@ import java.util.ArrayList;
 
 public class Main {
     static ArrayList<User> userList = new ArrayList<User>();
-     public static String usersFile = "users.txt";
+    public static String usersFile = "users.txt";
+    public static final String FILEPATH = "C:\\boris\\";
 
     public static void main(String[] args) {
 
 
-       int answer = JOptionPane.showOptionDialog(null,"Exist user?","Login", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,null,null);
+        int answer = JOptionPane.showOptionDialog(null, "Exist user?", "Login", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
-        switch (answer){
+        switch (answer) {
 
-            case 0 :
-               // printDetails();
+            case 0:
+                login();
                 break;
-            case 1 :
+            case 1:
                 registration();
-                 break;
 
-            case -1 :
-                JOptionPane.showMessageDialog(null,"Try it again");
+                break;
+
+            case -1:
+                JOptionPane.showMessageDialog(null, "Try it again");
                 break;
         }
+    }
 
-}
+    private static void login() {
+        User user = new User();
+        String name = JOptionPane.showInputDialog("Enter username");
+        String password = JOptionPane.showInputDialog("Enter password");
 
-    private static void printDetails() {
+        JSONArray array = getUserList();
 
 
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject json = null;
+            try {
+                json = array.getJSONObject(i);
+                if (json.getString("name").equals(name) && json.getString("password").equals(password)) {
+                    chooseAction();
+                    System.out.println("Correct");
+                } else
+                    System.out.println("Not correct");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
-    public static void registration()
-  {
+    public static void registration() {
+        User user = new User();
 
-      User user = new User();
-      String  name =JOptionPane.showInputDialog("Enter username");
+        user.setName(JOptionPane.showInputDialog("Enter username"));
+        user.setPassword(JOptionPane.showInputDialog("Enter password"));
+        user.setAge(JOptionPane.showInputDialog("Enter age"));
+        user.setSign(JOptionPane.showInputDialog("Enter Zodiak sign"));
+        createUser(user);
+        createTXT(user.getName());
 
-          while (userExist(name))
-          {
-              JOptionPane.showMessageDialog(null,"User alreaydy exist, try new");
-              name =JOptionPane.showInputDialog("Enter username");
-          }
+        JOptionPane.showMessageDialog(null, "Registration is Done");
+    }
 
-      user.setName(name);
-      user.setPassword(JOptionPane.showInputDialog("Enter password"));
-      user.setAge(JOptionPane.showInputDialog("Enter age"));
-      user.setSign(JOptionPane.showInputDialog("Enter Zodiak sign"));
+    ////////////////////////////////////////////////////////////////////
+    public static boolean userExist(String username, JSONArray arr) {
 
-      JSONObject jsonUser = new JSONObject(user);
-      System.out.println(jsonUser);
-
-      insertToFile(jsonUser);
-  }
-
-
-  public static boolean userExist(String username)
-  {
-
-      File file = new File(usersFile);
-      try {
-          BufferedReader in = new BufferedReader(new FileReader(file));
-          while((in.readLine())!=null)
-          {
-              in.read();
-          }
-
-          JSONArray array = new JSONArray(in.toString());
-          for (int i = 0; i < array.length(); i++) {
-              JSONObject json= array.getJSONObject(i);
-              if (json.getString("name").equals(username)) {
-                  return true;
-              }
-            }
-      } catch (FileNotFoundException e) {
-          e.printStackTrace();
-      } catch (IOException e) {
-          e.printStackTrace();
-      } catch (JSONException e) {
-          e.printStackTrace();
-      }
-
-      return false;
-
-  }
-
-    public static void insertToFile(JSONObject jsonObject)
-   {BufferedWriter out  = null;
-       System.out.println("Json  "+jsonObject.toString());
-       String content= jsonObject.toString();
-
-        File file = new File(usersFile);
-
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject json = null;
             try {
-
-                if (!file.exists()){
-                    file.createNewFile();
-                   }
-                out = new BufferedWriter(new FileWriter(file.getAbsoluteFile(), true));
-                out.write(content);
-                System.out.println("content " + content);
-
-            } catch (IOException e) {
+                json = arr.getJSONObject(i);
+                if (json.getString("name").equals(username)) {
+                    return true;
+                }
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
+        }
 
-    finally {
-           try {
-               out.close();
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
+        return false;
 
-       }
+    }
+
+    //////////////////////////////////////////////////////////
+    public static JSONArray getUserList() {
+        JSONArray array = null;
+        File file = new File(FILEPATH + "//" + usersFile);
+
+        String text = "";
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder();
+
+            while ((text = in.readLine()) != null) {
+                sb.append(text);
+            }
+
+
+            array = new JSONArray(sb.toString());
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return array;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////
+    public static void createUser(User user) {
+
+        ArrayList<User> arr2 = new ArrayList<>();
+        File file = new File(FILEPATH + "\\" + usersFile);
+        try {
+
+            if (!file.exists()) {
+                file.createNewFile();
+
+                arr2.add(user);
+                JSONArray array = new JSONArray(arr2);
+
+                updateUserFile(array);
+            } else {
+
+                JSONArray arr = getUserList();
+                if (!userExist(user.getName(), arr)) {
+
+                    JSONObject jsonObject = new JSONObject(user);
+                    arr.put(jsonObject);
+                    updateUserFile(arr);
+                } else {
+                    System.out.println("User already Exist");
+                }
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+        }
+    }
+     ////////////////////////////////////////////////////////////////////////////////////
+    public static void createTXT(String user)
+    {
+        File file = new File(FILEPATH+"\\"+user+".txt");
+        try {
+            file.createNewFile();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    //////////////////////////////////////////////////////////////////////////
+    public static void updateUserFile(JSONArray array) {
+
+
+        BufferedWriter out = null;
+        String content = array.toString();
+
+        File file = new File(FILEPATH + "\\" + usersFile);
+
+        try {
+            out = new BufferedWriter(new FileWriter(file));
+            out.write(content);
+            System.out.println("content " + content);
+            out.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void chooseAction() {
+
+        String[] options = {"Buy product", "Delete product", "Delete user"};
+
+
+        int option = JOptionPane.showOptionDialog(null, "Choose any option: ", "Actions", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
+        switch (option) {
+
+            case 0: {
+                     buyProduct();
+
+                break;
+            }
+            case 1: {
+
+                break;
+            }
+            case 2: {
+                break;
+            }
+            case -1: {
+                System.out.println("Try this option again");
+                break;
+            }
+        }
+    }
+
+  public static void buyProduct()
+  {   String [] food ={"pasta","pizza","suschi","stake","humus"};
+      String products = (String)JOptionPane.showInputDialog(null,"Buy any prodcut : ","Products",JOptionPane.QUESTION_MESSAGE,null,food,food[0]);
+
+      switch (products)
+      {
+          case "pasta" :
+          {
+              break;
+          }
+          case "pizza" :
+          {
+              break;
+          }
+
+          case "suschi" :
+          {
+              break;
+          }
+
+          case "stake" :
+          {
+              break;
+          }
+      }
+
+
   }
-
 }

@@ -34,7 +34,10 @@ public class MainJsonFromWeb {
                 sb.append(text);
             }
    //         System.out.println(sb.toString());
-
+            parseJSON (sb);
+                reader.close();
+            parseJSON (sb);
+            reader.close();
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -53,19 +56,17 @@ public class MainJsonFromWeb {
 
         for (int i = 0; i < mainArray.length(); i++) {
             JSONObject tempObject = mainArray.getJSONObject(i);
+
             String nameSubject = tempObject.getString("subject");
-            System.out.println(nameSubject);
+          //  System.out.println(nameSubject);
             File innerFolder = new File(localPath + "\\" + nameSubject);
             innerFolder.mkdir();
-            // System.out.println(tempObject);
 
             String urlName = tempObject.getString("image");
-            System.out.println(urlName);
-
+          //  System.out.println(urlName);
             String time = tempObject.getString("time");
-            System.out.println(time);
+         //   System.out.println(time);
 
-            System.out.println("-----------------");
             downloadImage(urlName, nameSubject);
             createTXT(nameSubject, time);
         }
@@ -82,7 +83,7 @@ public class MainJsonFromWeb {
           HttpURLConnection connection = (HttpURLConnection)url.openConnection();
            InputStream in = connection.getInputStream();
             FileOutputStream out = new FileOutputStream(localPath+"\\"+name+"\\"+name+".jpg");
-          System.out.println(localPath+"\\"+name+".jpg");
+      //    System.out.println(localPath+"\\"+name+".jpg");
             byte [] buffer = new byte [1024];
             int actuallyRead;
 
@@ -112,9 +113,6 @@ public class MainJsonFromWeb {
       } catch (IOException e) {
           e.printStackTrace();
       }
-
-
-
   }
 }
 
