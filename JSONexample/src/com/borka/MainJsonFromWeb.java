@@ -27,13 +27,15 @@ public class MainJsonFromWeb {
             URL url = new URL(pathJSON);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             BufferedReader reader = new BufferedReader (new InputStreamReader(conn.getInputStream()));
-           StringBuilder sb = new StringBuilder ();
+            StringBuilder sb = new StringBuilder ();
             String text ="";
             while((text=reader.readLine())!=null)
             {
                 sb.append(text);
             }
    //         System.out.println(sb.toString());
+            parseJSON (sb);
+                reader.close();
             parseJSON (sb);
             reader.close();
 
