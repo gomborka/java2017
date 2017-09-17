@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class Main {
     static ArrayList<User> userList = new ArrayList<User>();
      public static String usersFile = "users.txt";
+     public static final String FILEPATH ="C:\\boris\\";
 
     public static void main(String[] args) {
 
@@ -20,7 +21,7 @@ public class Main {
         switch (answer){
 
             case 0 :
-               // printDetails();
+               login();
                 break;
             case 1 :
                 registration();
@@ -30,97 +31,146 @@ public class Main {
                 JOptionPane.showMessageDialog(null,"Try it again");
                 break;
         }
-
 }
 
-    private static void printDetails() {
+    private static void login() {
+        User user = new User();
+        String  name =JOptionPane.showInputDialog("Enter username");
+        String  password =JOptionPane.showInputDialog("Enter password");
+
+        JSONArray array = getUserList();
 
 
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject json= null;
+            try {
+                json = array.getJSONObject(i);
+                if (json.getString("name").equals(name) && json.getString("password").equals(password)) {
+                   //chooseProduct();
+                    System.out.println("Correct");
+                }
+                else
+                    System.out.println("Not correct");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
     }
 
+
+
     public static void registration()
   {
-
       User user = new User();
       String  name =JOptionPane.showInputDialog("Enter username");
-
-          while (userExist(name))
-          {
-              JOptionPane.showMessageDialog(null,"User alreaydy exist, try new");
-              name =JOptionPane.showInputDialog("Enter username");
-          }
 
       user.setName(name);
       user.setPassword(JOptionPane.showInputDialog("Enter password"));
       user.setAge(JOptionPane.showInputDialog("Enter age"));
       user.setSign(JOptionPane.showInputDialog("Enter Zodiak sign"));
+      createUser(user);
 
-      JSONObject jsonUser = new JSONObject(user);
-      System.out.println(jsonUser);
-
-      insertToFile(jsonUser);
   }
-
-
-  public static boolean userExist(String username)
+////////////////////////////////////////////////////////////////////
+  public static boolean userExist(String username, JSONArray arr)
   {
 
-      File file = new File(usersFile);
-      try {
-          BufferedReader in = new BufferedReader(new FileReader(file));
-          while((in.readLine())!=null)
-          {
-              in.read();
+          for (int i = 0; i < arr.length(); i++) {
+              JSONObject json= null;
+              try {
+                  json = arr.getJSONObject(i);
+                  if (json.getString("name").equals(username)) {
+                      return true;
+              }
+              } catch (JSONException e) {
+                  e.printStackTrace();
+              }
           }
 
-          JSONArray array = new JSONArray(in.toString());
-          for (int i = 0; i < array.length(); i++) {
-              JSONObject json= array.getJSONObject(i);
-              if (json.getString("name").equals(username)) {
-                  return true;
+     return false;
+
+  }
+//////////////////////////////////////////////////////////
+  public static JSONArray getUserList() {
+      JSONArray array = null;
+      File file = new File(FILEPATH + "//" + usersFile);
+
+       String text="";
+         try {
+          BufferedReader  in = new BufferedReader(new FileReader(file));
+             StringBuilder sb = new StringBuilder();
+
+              while((text=in.readLine())!=null)
+              {
+                  sb.append(text);
               }
-            }
-      } catch (FileNotFoundException e) {
-          e.printStackTrace();
-      } catch (IOException e) {
-          e.printStackTrace();
+
+
+         array = new JSONArray(sb.toString());
+
+      } catch (IOException e1) {
+          e1.printStackTrace();
       } catch (JSONException e) {
-          e.printStackTrace();
-      }
-
-      return false;
-
+             e.printStackTrace();
+         }
+      return array;
   }
 
-    public static void insertToFile(JSONObject jsonObject)
-   {BufferedWriter out  = null;
-       System.out.println("Json  "+jsonObject.toString());
-       String content= jsonObject.toString();
 
-        File file = new File(usersFile);
+////////////////////////////////////////////////////////////////////
+    public static void createUser(User user) {
 
-            try {
+        ArrayList<User> arr2 = new ArrayList<>();
+        File file = new File(FILEPATH + "\\" + usersFile);
+        try {
 
-                if (!file.exists()){
-                    file.createNewFile();
-                   }
-                out = new BufferedWriter(new FileWriter(file.getAbsoluteFile(), true));
-                out.write(content);
-                System.out.println("content " + content);
+            if (!file.exists()) {
+                file.createNewFile();
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                arr2.add(user);
+               JSONArray array = new JSONArray(arr2);
+
+                updateUserFile(array);
+            } else {
+
+                JSONArray arr = getUserList();
+                if (!userExist(user.getName(),arr)) {
+
+                    JSONObject jsonObject = new JSONObject(user);
+                    arr.put(jsonObject);
+                    updateUserFile(arr);
+                }
+                else
+                {
+                    System.out.println("User already Exist");
+                }
             }
 
-    finally {
-           try {
-               out.close();
-           } catch (IOException e) {
-               e.printStackTrace();
-           }
+            } catch(IOException e){
+                e.printStackTrace();
 
-       }
-  }
+            }
+        }
 
+//////////////////////////////////////////////////////////////////////////
+    public static void updateUserFile(JSONArray array){
+
+
+        BufferedWriter out  = null;
+        String content = array.toString();
+
+        File file = new File(FILEPATH+"\\"+ usersFile);
+
+        try {
+            out = new BufferedWriter(new FileWriter(file));
+            out.write(content);
+            System.out.println("content " + content);
+            out.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
