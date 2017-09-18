@@ -6,7 +6,10 @@ import org.json.JSONObject;
 
 import javax.swing.*;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+
 
 public class Main {
     static ArrayList<User> userList = new ArrayList<User>();
@@ -14,7 +17,6 @@ public class Main {
     public static final String FILEPATH = "C:\\boris\\";
 
     public static void main(String[] args) {
-
 
         int answer = JOptionPane.showOptionDialog(null, "Exist user?", "Login", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
 
@@ -35,7 +37,7 @@ public class Main {
     }
 
     private static void login() {
-        User user = new User();
+
         String name = JOptionPane.showInputDialog("Enter username");
         String password = JOptionPane.showInputDialog("Enter password");
 
@@ -46,8 +48,12 @@ public class Main {
             JSONObject json = null;
             try {
                 json = array.getJSONObject(i);
-                if (json.getString("name").equals(name) && json.getString("password").equals(password)) {
-                    chooseAction();
+                if (json.getString("name").equals(name) && json.getString("password").equals(password))
+                {
+                   User user = new User();
+                    user.setName("name");
+                    user.setPassword("password");
+                    chooseAction(user);
                     System.out.println("Correct");
                 } else
                     System.out.println("Not correct");
@@ -69,6 +75,7 @@ public class Main {
         createTXT(user.getName());
 
         JOptionPane.showMessageDialog(null, "Registration is Done");
+        login();
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -143,6 +150,8 @@ public class Main {
                 }
             }
 
+            File userDir = new File(FILEPATH+"\\"+user.getName());
+            userDir.mkdir();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -183,21 +192,21 @@ public class Main {
 
     }
 
-    public static void chooseAction() {
+    public static void chooseAction(User user) {
 
-        String[] options = {"Buy product", "Delete product", "Delete user"};
+        String[] options = {"Buy product", "Show product", "Delete user"};
 
 
         int option = JOptionPane.showOptionDialog(null, "Choose any option: ", "Actions", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, null);
         switch (option) {
 
             case 0: {
-                     buyProduct();
+                     buyProduct(user);
 
                 break;
             }
             case 1: {
-
+                      showProduct(user);
                 break;
             }
             case 2: {
@@ -210,32 +219,79 @@ public class Main {
         }
     }
 
-  public static void buyProduct()
-  {   String [] food ={"pasta","pizza","suschi","stake","humus"};
-      String products = (String)JOptionPane.showInputDialog(null,"Buy any prodcut : ","Products",JOptionPane.QUESTION_MESSAGE,null,food,food[0]);
+  public static void buyProduct(User user)
+  {
+      boolean isContinue= true;
+      String [] food ={"pasta","pizza","suschi","stake","humus"};
 
-      switch (products)
-      {
-          case "pasta" :
-          {
-              break;
-          }
-          case "pizza" :
-          {
-              break;
-          }
+      ArrayList<String> shopCart = new ArrayList<>();
+      StringBuilder sb = new StringBuilder();
 
-          case "suschi" :
-          {
-              break;
-          }
-
-          case "stake" :
-          {
-              break;
-          }
-      }
+     while (isContinue) {
 
 
+//         switch (products) {
+//             case "pasta": {
+//                 sb.append(products+"\n")
+//                 break;
+//             }
+//             case "pizza": {
+//                 shopCart.add("pizza");
+//                 break;
+//             }
+//
+//             case "suschi": {
+//                 shopCart.add("suschi");
+//                 break;
+//             }
+//
+//             case "stake": {
+//                 shopCart.add("stake");
+//                 break;
+//             }
+//             default:
+//                 System.out.println("Hard day ???");
+//                 break;
+//         }
+         String products = (String)JOptionPane.showInputDialog(null,"Buy any prodcut : ","Products",JOptionPane.QUESTION_MESSAGE,null,food,food[0]);
+         sb.append(products+"\n");
+         int answer = JOptionPane.showOptionDialog(null, "Continue to buy?", "Shopping", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+         if (answer!=0) {
+             isContinue = false;
+         }
+     }
+
+     saveShopCart(sb,user);
   }
+
+  public static void showProduct(User user){
+        File folder= new File (FILEPATH+"//"+user.getName());
+      File [] items = folder.listFiles();
+      StringBuilder sb
+      for (int i = 0; i < items.length; i++) {
+
+
+      }
+  }
+
+ public static void saveShopCart(StringBuilder sb,User user){
+     Calendar c = Calendar.getInstance();
+     SimpleDateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
+     SimpleDateFormat time2 = new SimpleDateFormat("hh_mm_ss");
+     String myhour = time2.format(c.getTime());
+     System.out.println(myhour);
+
+     File file = new File(FILEPATH+"//"+ user.getName()+"//" +myhour+".txt");
+
+     try {
+         BufferedWriter out = new BufferedWriter(new FileWriter(file));
+         out.write(sb.toString());
+
+         out.close();
+
+     } catch (IOException e) {
+         e.printStackTrace();
+     }
+
+ }
 }
