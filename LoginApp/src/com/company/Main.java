@@ -12,9 +12,9 @@ import java.util.Calendar;
 
 
 public class Main {
-    static ArrayList<User> userList = new ArrayList<User>();
+   // static ArrayList<User> userList = new ArrayList<User>();
     public static String usersFile = "users.txt";
-    public static final String FILEPATH = "C:\\boris\\";
+    public static final String FILEPATH = "C:\\boris\\shop";
 
     public static void main(String[] args) {
 
@@ -42,26 +42,27 @@ public class Main {
         String password = JOptionPane.showInputDialog("Enter password");
 
         JSONArray array = getUserList();
-
+        boolean userFound = false;
 
         for (int i = 0; i < array.length(); i++) {
             JSONObject json = null;
             try {
                 json = array.getJSONObject(i);
-                if (json.getString("name").equals(name) && json.getString("password").equals(password))
-                {
-                   User user = new User();
-                    user.setName("name");
-                    user.setPassword("password");
+                if (json.getString("name").equals(name) && json.getString("password").equals(password)) {
+                    User user = new User();
+                    user.setName(name);
+                    user.setPassword(password);
                     chooseAction(user);
-                    System.out.println("Correct");
-                } else
-                    System.out.println("Not correct");
+                    userFound = true;
+                }
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-
+        if (userFound == false) {
+            JOptionPane.showMessageDialog(null, "Not corect");
+        }
     }
 
     public static void registration() {
@@ -69,10 +70,7 @@ public class Main {
 
         user.setName(JOptionPane.showInputDialog("Enter username"));
         user.setPassword(JOptionPane.showInputDialog("Enter password"));
-        user.setAge(JOptionPane.showInputDialog("Enter age"));
-        user.setSign(JOptionPane.showInputDialog("Enter Zodiak sign"));
         createUser(user);
-        createTXT(user.getName());
 
         JOptionPane.showMessageDialog(null, "Registration is Done");
         login();
@@ -102,6 +100,7 @@ public class Main {
         JSONArray array = null;
         File file = new File(FILEPATH + "//" + usersFile);
 
+
         String text = "";
         try {
             BufferedReader in = new BufferedReader(new FileReader(file));
@@ -110,9 +109,15 @@ public class Main {
             while ((text = in.readLine()) != null) {
                 sb.append(text);
             }
-
-
             array = new JSONArray(sb.toString());
+
+//            ArrayList<String> list = new ArrayList<String>();
+//            array = new JSONArray(sb.toString());
+//            if (array != null) {
+//                for (int i=0;i<array.length();i++){
+//                    list.add(array.get(i).toString());
+//                }
+//            }
 
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -159,18 +164,18 @@ public class Main {
         }
     }
      ////////////////////////////////////////////////////////////////////////////////////
-    public static void createTXT(String user)
-    {
-        File file = new File(FILEPATH+"\\"+user+".txt");
-        try {
-            file.createNewFile();
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-    }
+//    public static void createTXT(String user)
+//    {
+//        File file = new File(FILEPATH+"\\"+user+".txt");
+//        try {
+//            file.createNewFile();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
     //////////////////////////////////////////////////////////////////////////
     public static void updateUserFile(JSONArray array) {
 
@@ -183,7 +188,6 @@ public class Main {
         try {
             out = new BufferedWriter(new FileWriter(file));
             out.write(content);
-            System.out.println("content " + content);
             out.close();
 
         } catch (IOException e) {
@@ -191,7 +195,7 @@ public class Main {
         }
 
     }
-
+////////////////////////////////////////////////////////////////
     public static void chooseAction(User user) {
 
         String[] options = {"Buy product", "Show product", "Delete user"};
@@ -210,6 +214,8 @@ public class Main {
                 break;
             }
             case 2: {
+                deleteShopCart(user);
+               deleteUser(user);
                 break;
             }
             case -1: {
@@ -218,7 +224,7 @@ public class Main {
             }
         }
     }
-
+//////////////////////////////////////////////////////////////
   public static void buyProduct(User user)
   {
       boolean isContinue= true;
@@ -263,17 +269,72 @@ public class Main {
 
      saveShopCart(sb,user);
   }
-
+/////////////////////////////////////////////////////////////////////
   public static void showProduct(User user){
         File folder= new File (FILEPATH+"//"+user.getName());
       File [] items = folder.listFiles();
-      StringBuilder sb
+
+
       for (int i = 0; i < items.length; i++) {
+
+          File file = new File (items[i].toString());
+           try {
+            BufferedReader in = new BufferedReader( new FileReader(file));
+              StringBuilder sb = new StringBuilder();
+              String text ="";
+              while ((text = in.readLine())!= null)
+              {
+               sb.append(text);
+               sb.append("\t");
+              }
+              System.out.println(items[i].getName() + " : " + sb.toString());
+
+          } catch (FileNotFoundException e) {
+              e.printStackTrace();
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
 
 
       }
   }
+////////////////////////////////////////////////////////////
+  public static void deleteUser(User user)
+  {
+     JSONArray userlist = new JSONArray();
+      userlist=getUserList();
+  //    ArrayList<String> list = new ArrayList<String>();
+      JSONArray updatedList = new JSONArray();
+      for (int i = 0; i < userlist.length(); i++) {
+          JSONObject json = null;
+          try {
+              json = userlist.getJSONObject(i);
+              if (!(json.getString("name").equals(user.getName()))) {
+                  updatedList.put(json);
+              }
+          } catch (JSONException e) {
+              e.printStackTrace();
+          }
+      }
+      updateUserFile (updatedList);
+    }
+////////////////////////////////////////////////////////////
+  public static void  deleteShopCart(User user)
+  {
+      File folder = new File (FILEPATH+"//"+user.getName());
+      System.out.println("Folder to del " + folder.toString());
 
+      String[]items = folder.list();
+      for(String curr: items){
+          System.out.println("curr" + curr);
+          File currentFile = new File(folder.getPath(),curr);
+          currentFile.delete();
+               }
+
+       folder.delete();
+  }
+
+  ////////////////////////////////////////////////////////////
  public static void saveShopCart(StringBuilder sb,User user){
      Calendar c = Calendar.getInstance();
      SimpleDateFormat date1 = new SimpleDateFormat("dd-MM-yyyy");
