@@ -9,7 +9,7 @@ public class Main {
     private static String message;
 
     public static void main(String[] args) {
-	String ip = "10.0.0.5";
+	String ip = "192.168.1.13";
 	int port =5000;
         OutputStream out=null ;
 

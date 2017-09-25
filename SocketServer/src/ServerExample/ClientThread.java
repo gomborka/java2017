@@ -1,4 +1,4 @@
-package com.borka;
+package ServerExample;
 
 import java.io.BufferedReader;
 import java.io.IOException;

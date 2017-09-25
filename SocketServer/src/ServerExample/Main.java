@@ -1,6 +1,4 @@
-package com.borka;
-
-import com.sun.security.ntlm.Client;
+package ServerExample;
 
 import java.io.IOException;
 import java.net.ServerSocket;
